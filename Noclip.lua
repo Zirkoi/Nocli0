@@ -66,6 +66,17 @@ game:GetService("UserInputService").InputChanged:Connect(function(input)
 end)
 
 local noclip = false
+local characterParts = {}
+
+local function updateCollision()
+    if player.Character then
+        for _, part in pairs(player.Character:GetDescendants()) do
+            if part:IsA("BasePart") then
+                part.CanCollide = not noclip
+            end
+        end
+    end
+end
 
 noclipButton.MouseButton1Click:Connect(function()
     noclip = not noclip
@@ -74,14 +85,11 @@ noclipButton.MouseButton1Click:Connect(function()
     else
         noclipButton.BackgroundColor3 = Color3.new(1, 0, 0)
     end
+    updateCollision()
 end)
 
-game:GetService("RunService").Stepped:Connect(function()
-    if noclip and player.Character then
-        for _, part in pairs(player.Character:GetDescendants()) do
-            if part:IsA("BasePart") then
-                part.CanCollide = false
-            end
-        end
+player.CharacterAdded:Connect(function(character)
+    if not noclip then
+        updateCollision()
     end
 end)
